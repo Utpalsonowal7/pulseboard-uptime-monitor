@@ -1,0 +1,8 @@
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+**/src/generated/prisma
+.git
+.gitignore
+upload

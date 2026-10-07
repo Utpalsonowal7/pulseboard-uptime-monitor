@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum IncidentStatus {
+  OPEN
+  RESOLVED
+}
+
+model Monitor {
+  id        String         @id @default(uuid()) @db.Uuid
+  name      String         @db.VarChar(100)
+  url       String         @db.VarChar(2048)
+  slug      String         @unique @db.VarChar(80)
+  enabled   Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  checks    MonitorCheck[]
+  incidents Incident[]
+
+  @@index([enabled])
+}
+
+model MonitorCheck {
+  id             String   @id @default(uuid()) @db.Uuid
+  monitorId      String   @db.Uuid
+  statusCode     Int?
+  responseTimeMs Int?
+  isOnline       Boolean
+  errorMessage   String?  @db.VarChar(500)
+  checkedAt      DateTime @default(now())
+  monitor        Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+
+  @@index([monitorId, checkedAt])
+}
+
+model Incident {
+  id           String         @id @default(uuid()) @db.Uuid
+  monitorId    String         @db.Uuid
+  startedAt    DateTime       @default(now())
+  resolvedAt   DateTime?
+  status       IncidentStatus @default(OPEN)
+  initialError String?        @db.VarChar(500)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  monitor      Monitor        @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+
+  @@index([monitorId])
+  @@index([monitorId, status])
+}
