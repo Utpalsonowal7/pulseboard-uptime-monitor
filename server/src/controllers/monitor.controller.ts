@@ -6,20 +6,22 @@ const routeParam = (req: Parameters<RequestHandler>[0], name: string): string =>
   return Array.isArray(value) ? value[0] ?? "" : value ?? "";
 };
 
-export const list: RequestHandler = async (_req, res) => { res.json({ data: await monitorService.listMonitors() }); };
+const ownerId = (res: Parameters<RequestHandler>[1]) => (res.locals.auth as { userId: string }).userId;
+
+export const list: RequestHandler = async (_req, res) => { res.json({ data: await monitorService.listMonitors(ownerId(res)) }); };
 export const create: RequestHandler = async (req, res) => {
-  const monitor = await monitorService.createMonitor(res.locals.validatedBody as monitorService.MonitorInput);
+  const monitor = await monitorService.createMonitor(res.locals.validatedBody as monitorService.MonitorInput, ownerId(res));
   res.status(201).json({ data: monitor });
 };
-export const getById: RequestHandler = async (req, res) => { res.json({ data: await monitorService.getMonitor(routeParam(req, "id")) }); };
+export const getById: RequestHandler = async (req, res) => { res.json({ data: await monitorService.getMonitor(routeParam(req, "id"), ownerId(res)) }); };
 export const update: RequestHandler = async (req, res) => {
-  res.json({ data: await monitorService.updateMonitor(routeParam(req, "id"), res.locals.validatedBody as Partial<monitorService.MonitorInput>) });
+  res.json({ data: await monitorService.updateMonitor(routeParam(req, "id"), res.locals.validatedBody as Partial<monitorService.MonitorInput>, ownerId(res)) });
 };
 export const remove: RequestHandler = async (req, res) => {
-  await monitorService.deleteMonitor(routeParam(req, "id"));
+  await monitorService.deleteMonitor(routeParam(req, "id"), ownerId(res));
   res.status(204).send();
 };
-export const checks: RequestHandler = async (req, res) => { res.json({ data: await monitorService.getMonitorChecks(routeParam(req, "id")) }); };
-export const stats: RequestHandler = async (req, res) => { res.json({ data: (await monitorService.getMonitor(routeParam(req, "id"))).stats }); };
-export const incidents: RequestHandler = async (req, res) => { res.json({ data: await monitorService.getMonitorIncidents(routeParam(req, "id")) }); };
+export const checks: RequestHandler = async (req, res) => { res.json({ data: await monitorService.getMonitorChecks(routeParam(req, "id"), ownerId(res)) }); };
+export const stats: RequestHandler = async (req, res) => { res.json({ data: (await monitorService.getMonitor(routeParam(req, "id"), ownerId(res))).stats }); };
+export const incidents: RequestHandler = async (req, res) => { res.json({ data: await monitorService.getMonitorIncidents(routeParam(req, "id"), ownerId(res)) }); };
 export const publicStatus: RequestHandler = async (req, res) => { res.json({ data: await monitorService.getPublicStatus(routeParam(req, "slug")) }); };

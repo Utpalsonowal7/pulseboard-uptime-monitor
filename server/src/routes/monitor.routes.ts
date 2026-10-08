@@ -2,8 +2,10 @@ import { Router } from "express";
 import { z } from "zod";
 import * as controller from "../controllers/monitor.controller.js";
 import { validateBody } from "../middleware/validate.js";
+import { requireAuth } from "../middleware/auth.js";
 
 const router = Router();
+router.use(requireAuth);
 router.use("/:id", (req, res, next) => {
   if (!z.uuid().safeParse(req.params.id).success) {
     res.status(400).json({ error: { message: "Monitor id must be a valid UUID" } });

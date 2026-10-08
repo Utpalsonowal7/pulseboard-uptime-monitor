@@ -18,12 +18,15 @@ model Monitor {
   url       String         @db.VarChar(2048)
   slug      String         @unique @db.VarChar(80)
   enabled   Boolean        @default(true)
+  userId    String?        @db.Uuid
+  user      User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   checks    MonitorCheck[]
   incidents Incident[]
 
   @@index([enabled])
+  @@index([userId])
 }
 
 model MonitorCheck {
@@ -52,4 +55,30 @@ model Incident {
 
   @@index([monitorId])
   @@index([monitorId, status])
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  name         String    @db.VarChar(100)
+  email        String    @unique @db.VarChar(255)
+  passwordHash String    @db.VarChar(255)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sessions     Session[]
+  monitors     Monitor[]
+}
+
+model Session {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @db.Uuid
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokenHash String    @db.VarChar(64)
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  userAgent        String?   @db.VarChar(500)
+  ipAddress        String?   @db.VarChar(45)
+  createdAt        DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }
