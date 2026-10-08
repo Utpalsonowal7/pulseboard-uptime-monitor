@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, ArrowUpRight, Check, CircleAlert, Clock3, Plus, RefreshCw, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCreateMonitor, useDeleteMonitor, useMonitors, useUpdateMonitor } from '../hooks/useMonitors';
-import { errorMessage } from '../lib/api';
+import { apiErrorHint, apiErrorTitle, errorMessage } from '../lib/api';
 import type { Monitor } from '../types';
 import { MonitorCard } from '../components/MonitorCard';
 import { MonitorForm } from '../components/MonitorForm';
@@ -46,7 +46,7 @@ export function DashboardPage() {
   const today = new Intl.DateTimeFormat('en-IN', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(new Date()).toUpperCase();
   return <>
     <section className="welcome-row"><div><p className="eyebrow"><span className="eyebrow-dot" /> {today}</p><h1>Your services, <span>at a glance.</span></h1><p className="welcome-subtitle">A clear view of what’s up, what’s slow, and what needs attention.</p></div><div className="welcome-actions"><button className="button button-secondary refresh-button" onClick={() => void query.refetch()}><RefreshCw size={15} className={query.isFetching ? 'spin' : ''} />Refresh</button><button className="button button-primary" onClick={() => { setEditing(null); setFormOpen(true); }}><Plus size={17} />Add monitor</button></div></section>
-    {query.isError && <div className="api-alert"><CircleAlert size={17} /><div><strong>Can’t reach the PulseBoard API</strong><span>{errorMessage(query.error)} Start the backend and check `VITE_API_URL`.</span></div><button className="icon-button" onClick={() => void query.refetch()}><RefreshCw size={15} /></button></div>}
+    {query.isError && <div className="api-alert"><CircleAlert size={17} /><div><strong>{apiErrorTitle(query.error)}</strong><span>{apiErrorHint(query.error)}</span></div><button className="icon-button" onClick={() => void query.refetch()}><RefreshCw size={15} /></button></div>}
     <section className="overview-stats">
       <div className="overview-stat"><div className="stat-label-row"><span>Monitors</span><span className="stat-symbol symbol-indigo"><ShieldCheck size={15} /></span></div><div className="stat-number">{query.isPending ? '—' : monitors.length.toString().padStart(2, '0')}<span className="stat-caption">services tracked</span></div><div className="stat-foot">Across your workspace</div></div>
       <div className="overview-stat"><div className="stat-label-row"><span>Overall uptime <small>· 24h</small></span><span className="stat-symbol symbol-green"><Check size={15} /></span></div><div className="stat-number">{query.isPending ? '—' : statUptime(monitors)}<span className="stat-trend"><ArrowUpRight size={13} /> healthy</span></div><div className="stat-foot">Weighted across all checked services</div></div>

@@ -24,7 +24,7 @@ npm run prisma:migrate
 npm run dev
 ```
 
-The example database URL targets the PostgreSQL container in `docker-compose.yml`. If you already have a database, point `DATABASE_URL` in `server/.env` at a dedicated PulseBoard database before running migrations. Do not use a database that belongs to another application. The local development server generates a temporary JWT secret if `JWT_SECRET` is unset; configure a long, unique value for production.
+The example database URL targets the PostgreSQL container in `docker-compose.yml`. If you already have a database, point `DATABASE_URL` in `server/.env` at a dedicated PulseBoard database before running migrations. Do not use a database that belongs to another application. Local development uses a stable local-only JWT secret if `JWT_SECRET` is unset, so sessions survive API restarts. Set a private secret in `server/.env` for production; production startup refuses to run without it.
 
 Open http://localhost:5173. The API runs at http://localhost:8080 and its database-backed health endpoint is http://localhost:8080/api/health. Keep the dev terminal running; use `docker compose down` to stop PostgreSQL when you are finished.
 

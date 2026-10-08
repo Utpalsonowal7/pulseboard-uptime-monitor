@@ -49,3 +49,15 @@ export function errorMessage(error: unknown): string {
   }
   return error instanceof Error ? error.message : 'Something went wrong.';
 }
+
+export function apiErrorTitle(error: unknown): string {
+  if (!axios.isAxiosError(error) || !error.response) return 'Can’t reach the PulseBoard API';
+  if (error.response.status === 401) return 'Your session expired';
+  return 'The PulseBoard API returned an error';
+}
+
+export function apiErrorHint(error: unknown): string {
+  if (!axios.isAxiosError(error) || !error.response) return 'Start the backend and check VITE_API_URL.';
+  if (error.response.status === 401) return 'Sign in again to continue.';
+  return errorMessage(error);
+}

@@ -1,5 +1,4 @@
 import "dotenv/config";
-import { randomBytes } from "node:crypto";
 import { z } from "zod";
 
 const envSchema = z.object({
@@ -20,4 +19,8 @@ if (parsed.data.NODE_ENV === "production" && !parsed.data.JWT_SECRET) {
   console.error("Invalid environment configuration: JWT_SECRET is required in production.");
   process.exit(1);
 }
-export const env = { ...parsed.data, JWT_SECRET: parsed.data.JWT_SECRET ?? randomBytes(32).toString("hex") };
+const localDevelopmentSecret = "pulseboard-local-development-secret-only-do-not-use-in-production";
+if (!parsed.data.JWT_SECRET && parsed.data.NODE_ENV !== "production") {
+  console.warn("JWT_SECRET is unset; using the local development secret. Set a private value in server/.env for persistent local sessions.");
+}
+export const env = { ...parsed.data, JWT_SECRET: parsed.data.JWT_SECRET ?? localDevelopmentSecret };
