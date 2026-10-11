@@ -6,8 +6,8 @@ import { authKeys, authService, type User } from '../services/auth';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 const nav = [
-  { to: '/', label: 'Overview', Icon: Gauge, end: true },
-  { to: '/incidents', label: 'Incidents', Icon: Activity },
+  { to: '/app', label: 'Overview', Icon: Gauge, end: true },
+  { to: '/app/incidents', label: 'Incidents', Icon: Activity },
 ];
 export function AppShell({ onAdd, user }: { onAdd: () => void; user: User }) {
   const client = useQueryClient();
@@ -16,7 +16,7 @@ export function AppShell({ onAdd, user }: { onAdd: () => void; user: User }) {
   const initials = user.name.split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase();
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const title = location.pathname.startsWith('/incidents') ? 'Incident log' : location.pathname.startsWith('/monitors/') ? 'Monitor details' : 'Overview';
+  const title = location.pathname.startsWith('/app/incidents') ? 'Incident log' : location.pathname.startsWith('/app/monitors/') ? 'Monitor details' : 'Overview';
   const sidebar = <>
     <div className="brand"><div className="brand-mark"><RadioTower size={19} strokeWidth={2.25} /></div><span>pulseboard</span><span className="brand-beta">BETA</span></div>
     <div className="workspace-switcher"><div className="workspace-avatar">{initials}</div><div className="workspace-copy"><strong>{user.name}</strong><span>Personal workspace</span></div></div>

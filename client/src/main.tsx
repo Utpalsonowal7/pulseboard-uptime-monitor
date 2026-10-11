@@ -8,6 +8,7 @@ import { IncidentsPage } from './pages/IncidentsPage';
 import { MonitorPage } from './pages/MonitorPage';
 import { PublicStatusPage } from './pages/PublicStatusPage';
 import { AuthLoading, AuthPage } from './pages/AuthPage';
+import { HomePage } from './pages/HomePage';
 import { authKeys, authService } from './services/auth';
 import './styles.css';
 
@@ -21,14 +22,15 @@ function Workspace() {
 function GuestPage({ mode }: { mode: 'login' | 'register' }) {
   const auth = useQuery({ queryKey: authKeys.me, queryFn: authService.me, retry: false });
   if (auth.isPending) return <AuthLoading />;
-  if (auth.data) return <Navigate to="/" replace />;
+  if (auth.data) return <Navigate to="/app" replace />;
   return <AuthPage mode={mode} />;
 }
 const router = createBrowserRouter([
+  { path: '/', element: <HomePage /> },
   { path: '/status/:slug', element: <PublicStatusPage /> },
   { path: '/login', element: <GuestPage mode="login" /> },
   { path: '/register', element: <GuestPage mode="register" /> },
-  { path: '/', element: <Workspace />, children: [
+  { path: '/app', element: <Workspace />, children: [
     { index: true, element: <DashboardPage /> },
     { path: 'monitors/:id', element: <MonitorPage /> },
     { path: 'incidents', element: <IncidentsPage /> },

@@ -30,7 +30,7 @@ export function AuthPage({ mode }: { mode: "login" | "register" }) {
                     : authService.login({ email, password }),
           onSuccess: (user) => {
                client.setQueryData(authKeys.me, user);
-               navigate("/", { replace: true });
+               navigate("/app", { replace: true });
           },
      });
      function submit(event: FormEvent<HTMLFormElement>) {

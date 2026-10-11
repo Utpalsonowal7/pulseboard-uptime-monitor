@@ -18,7 +18,7 @@ export function MonitorCard({ monitor, onEdit, onDelete, onToggle }: {
   const state = getState(monitor);
   return <article className="monitor-card">
     <div className="monitor-card-top">
-      <div className="monitor-identity"><div className={`service-avatar avatar-${state}`}><span>{monitor.name.slice(0, 1).toUpperCase()}</span></div><div><Link to={`/monitors/${monitor.id}`} className="monitor-name">{monitor.name}<ArrowUpRight size={14} /></Link><a className="monitor-url" href={monitor.url} target="_blank" rel="noreferrer">{monitor.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a></div></div>
+      <div className="monitor-identity"><div className={`service-avatar avatar-${state}`}><span>{monitor.name.slice(0, 1).toUpperCase()}</span></div><div><Link to={`/app/monitors/${monitor.id}`} className="monitor-name">{monitor.name}<ArrowUpRight size={14} /></Link><a className="monitor-url" href={monitor.url} target="_blank" rel="noreferrer">{monitor.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a></div></div>
       <div className="card-menu-wrap"><details className="card-menu"><summary className="icon-button" aria-label="Monitor actions"><MoreHorizontal size={19} /></summary><div className="menu-popover"><button onClick={() => onEdit(monitor)}><Pencil size={14} />Edit monitor</button><button onClick={() => onToggle(monitor)}>{monitor.enabled ? 'Pause checks' : 'Resume checks'}</button><button className="danger-action" onClick={() => onDelete(monitor)}><Trash2 size={14} />Delete monitor</button></div></details></div>
     </div>
     <div className="card-status-row"><StatusPill state={state} /><span className="last-checked"><Clock3 size={13} />{formatTime(monitor.stats.latestCheck?.checkedAt)}</span></div>
